@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto de Conservación Interactivo</title>
+    <style>
+        .hoja {
+    will-change: transform;
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+    animation-timing-function: linear;
+}
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: #f0f2f5;
+            overflow: hidden;
+        }
+        
+        .contenedor {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .columna {
+            flex: 1;
+            padding: 0; /* Eliminamos el padding para la imagen superior */
+            box-sizing: border-box;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .columna::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 0;
+        }
+        
+        .columna * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .columna:nth-child(1) { background-image: url("fondo1.jpg"); }
+        .columna:nth-child(2) { background-image: url("fondo2.png"); }
+        .columna:nth-child(3) { background-image: url("fondo3.jpg"); }
+        
+        /* Imagen superior (reemplaza el título "Conservación") */
+        .imagen-titulo {
+            width: 100%;
+            max-height: 140px; /* Ajusta esto según tu imagen */
+            object-fit: contain;
+            margin-top: 0px; /* Espacio mínimo arriba */
+        }
+        
+        .img-container {
+            text-align: center;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .img-clickeable {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            cursor: pointer;
+            object-fit: cover;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .img-clickeable:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0.9;
+        }
+        
+        /* Animación al hacer clic */
+        .img-clickeable:active {
+            animation: rebote 0.4s ease;
+        }
+        
+        @keyframes rebote {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+        }
+        
+        .puntos-conservacion {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 15px;
+            background: rgba(16, 17, 82, 0.6);
+            padding: 8px 15px;
+            border-radius: 25px;
+            letter-spacing: 1px;
+        }
+        
+        /* Efecto "+1" */
+        .efecto-mas-uno {
+            position: absolute;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 24px;
+            animation: flotar 1s ease-out forwards;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        @keyframes flotar {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+        
+        /* Hojas cayendo (arreglado: ahora caen desde arriba) */
+        .hoja {
+            position: absolute;
+            opacity: 0.6;
+            z-index: 1;
+            animation: caer linear forwards;
+            pointer-events: none;
+            top: -50px; /* Inician arriba del todo */
+        }
+        
+        @keyframes caer {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            100% { transform: translateY(calc(100vh + 50px)) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Hojas acumuladas (ajustadas para estar más abajo) */
+        .hoja-acumulada {
+            position: absolute;
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+            transition: transform 0.5s ease-out;
+            bottom: -20px; /* Más abajo */
+        }
+        /* Estilos para la tienda */
+        .tienda {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+        }
+
+        .lista-animales {
+    list-style: none;
+    padding: 0;
+        }
+
+        .lista-animales li {
+    margin: 10px 0;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+        }
+
+        .lista-animales button {
+    background: rgba(16, 17, 82, 0.6);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+        }
+
+        .lista-animales button:hover {
+    background: #45a049;
+        }
+        .icono-animal {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.lista-animales li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lista-animales button {
+    flex-grow: 1;
+}
+/* Añade esto a tu CSS */
+.lista-animales {
+    max-height: 80vh; /* 60% del alto de pantalla */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 17, 82, 0.6);
+}
+
+/* Estilo para navegadores WebKit (Chrome, Safari) */
+.lista-animales::-webkit-scrollbar {
+    width: 8px;
+}
+.lista-animales::-webkit-scrollbar-thumb {
+    background-color: rgba(16, 17, 82, 0.6);
+    border-radius: 4px;
+}
+.contenedor-icono {
+    position: relative;
+    display: inline-block;
+}
+
+.contador-compras {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid #4CAF50;
+}
+.parque-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.elemento-parque {
+    position: absolute;
+    max-width: 100px;
+    max-height: 100px;
+    pointer-events: none;
+    user-select: none;
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+    transition: transform 0.5s ease;
+}
+
+.elemento-parque:hover {
+    transform: scale(1.1) rotate(5deg);
+    z-index: 100;
+}
+#columna-parque {
+    position: relative;
+    overflow: hidden; /* Para que no se salgan los elementos */
+}
+
+.animal-en-parque {
+    position: absolute;
+    max-width: 100px;
+    max-height: 100px;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+    z-index: 10;
+}
+
+.animal-en-parque:hover {
+    transform: scale(1.1);
+    z-index: 100;
+    filter: drop-shadow(0 0 5px rgba(255,255,0,0.7));
+}
+/* Estilos para las capas */
+#parque-container {
+    perspective: 1000px; /* Da sensación de profundidad */
+}
+
+.animal-en-parque {
+    transition: all 0.5s ease;
+    transform-style: preserve-3d;
+}
+
+/* Efecto de sombra para profundidad */
+.animal-en-parque[style*="z-index: 5"], 
+.animal-en-parque[style*="z-index: 3"] {
+    filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.3));
+}
+
+.animal-en-parque[style*="z-index: 30"],
+.animal-en-parque[style*="z-index: 40"] {
+    filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+}
+    </style>
+</head>
+<body>
+                <div class="contenedor">
+                    <!-- Columna 1 (Interactiva) -->
+                    <div class="columna" id="columna-hojas">
+                        <!-- Imagen superior (reemplaza el título) -->
+                        <img src="titulo-conservacion.png" class="imagen-titulo" alt="Conservación">
+                        
+                        <div class="img-container">
+                            <div class="puntos-conservacion" id="puntos">Puntos: 0</div>
+                            <img 
+                                src="imagen-ejemplo.jpg" 
+                                class="img-clickeable" 
+                                alt="Contribuye" 
+                                id="imagen-click"
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Columnas 2 y 3 -->
+                <div class="columna" id="columna-parque">
+                    <!-- Contenedor para los elementos del parque -->
+                    <div class="parque-container" id="parque-container"></div>
+                </div>
+                    
+                <div class="columna">
+                    <img src="tienda-epica.jpg" class="imagen-titulo" alt="Tienda Épica">
+                    <div class="tienda">
+                    <ul class="lista-animales">
+                <!-- Lenga -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/lenga.png" class="icono-animal" alt="Lenga">
+                        <span class="contador-compras" id="contador-lenga">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('lenga', 25, 2, 5000)">
+                        Lenga - 25 pts
+                    </button>
+                    <span>+2 pts/5s</span>
+                </li>
+                
+                <!-- Lago -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/lago.png" class="icono-animal" alt="Lago">
+                        <span class="contador-compras" id="contador-lago">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('lago', 50, 5, 10000)">
+                        Lago - 50 pts
+                    </button>
+                    <span>+5 pts/10s</span>
+                </li>
+                
+                <!-- Ñire -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/nire.png" class="icono-animal" alt="Ñire">
+                        <span class="contador-compras" id="contador-nire">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('nire', 100, 10, 12000)">
+                        Ñire - 100 pts
+                    </button>
+                    <span>+10 pts/12s</span>
+                </li>
+                
+                <!-- Coiron -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/coiron.png" class="icono-animal" alt="Coiron">
+                        <span class="contador-compras" id="contador-coiron">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('coiron', 150, 15, 15000)">
+                        Coiron - 150 pts
+                    </button>
+                    <span>+15 pts/15s</span>
+                </li>
+                
+                <!-- Chinchillón Anaranjado -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/chinchillon.png" class="icono-animal" alt="Chinchillón">
+                        <span class="contador-compras" id="contador-chinchillon">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('chinchillon', 200, 12, 13000)">
+                        Chinchillón Anaranjado - 200 pts
+                    </button>
+                    <span>+12 pts/13s</span>
+                </li>
+                
+                <!-- Tuco-tuco Magallánico -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/tuco.png" class="icono-animal" alt="Tuco-tuco">
+                        <span class="contador-compras" id="contador-tuco">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('tuco', 250, 20, 13000)">
+                        Tuco-tuco Magallánico - 250 pts
+                    </button>
+                    <span>+20 pts/13s</span>
+                </li>
+                
+                <!-- Zorro Colorado -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/zorroc.png" class="icono-animal" alt="Zorro Colorado">
+                        <span class="contador-compras" id="contador-zorroc">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('zorroc', 300, 40, 13000)">
+                        Zorro Colorado - 300 pts
+                    </button>
+                    <span>+40 pts/13s</span>
+                </li>
+                
+                <!-- Zorro Gris -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/zorrog.png" class="icono-animal" alt="Zorro Gris">
+                        <span class="contador-compras" id="contador-zorrog">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('zorrog', 500, 60, 15000)">
+                        Zorro Gris - 500 pts
+                    </button>
+                    <span>+60 pts/15s</span>
+                </li>
+                
+                <!-- Gato Montes -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/gato.png" class="icono-animal" alt="Gato Montes">
+                        <span class="contador-compras" id="contador-gato">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('gato', 750, 80, 18000)">
+                        Gato Montes - 750 pts
+                    </button>
+                    <span>+80 pts/18s</span>
+                </li>
+                
+                <!-- Huron Menor -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/huron.png" class="icono-animal" alt="Huron Menor">
+                        <span class="contador-compras" id="contador-huron">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('huron', 900, 110, 19000)">
+                        Huron Menor - 900 pts
+                    </button>
+                    <span>+110 pts/19s</span>
+                </li>
+                
+                <!-- Zorrino Patagonico -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/zorrino.png" class="icono-animal" alt="Zorrino Patagonico">
+                        <span class="contador-compras" id="contador-zorrino">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('zorrino', 1300, 150, 20000)">
+                        Zorrino Patagonico - 1300 pts
+                    </button>
+                    <span>+150 pts/20s</span>
+                </li>
+                
+                <!-- Pichi Patagonico -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/pichi.png" class="icono-animal" alt="Pichi Patagonico">
+                        <span class="contador-compras" id="contador-pichi">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('pichi', 1500, 150, 18000)">
+                        Pichi Patagonico - 1500 pts
+                    </button>
+                    <span>+150 pts/18s</span>
+                </li>
+                
+                <!-- Guanaco -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/guanaco.png" class="icono-animal" alt="Guanaco">
+                        <span class="contador-compras" id="contador-guanaco">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('guanaco', 2000, 200, 5000)">
+                        Guanaco - 2000 pts
+                    </button>
+                    <span>+200 pts/5s</span>
+                </li>
+                
+                <!-- Huemul -->
+                <li>
+                    <div class="contenedor-icono">
+                        <img src="imagenes/huemul.png" class="icono-animal" alt="Huemul">
+                        <span class="contador-compras" id="contador-huemul">0</span>
+                    </div>
+                    <button onclick="comprarAnimal('huemul', 3000, 500, 10000)">
+                        Huemul - 3000 pts
+                    </button>
+                    <span>+500 pts/10s</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<script>
+// Variables
+const contadorAnimales = {};
+let puntos = 0;
+let puntosPorSegundo = 0;
+const imagen = document.getElementById('imagen-click');
+const elementoPuntos = document.getElementById('puntos');
+const columnaHojas = document.getElementById('columna-hojas');
+let hojasAcumuladas = 0;
+let hojasActivas = 0;
+const MAX_HOJAS = 30; // Límite máximo de hojas simultáneas
+
+// Elemento para mostrar PPS
+const elementoPPS = document.createElement('div');
+elementoPPS.className = 'puntos-conservacion';
+elementoPPS.textContent = 'PPS: 0';
+elementoPuntos.parentElement.insertBefore(elementoPPS, elementoPuntos.nextSibling);
+
+// Función para aumentar puntos y efectos
+imagen.addEventListener('click', function() {
+    // Aumentar 1 punto
+    puntos += 1;
+    elementoPuntos.textContent = `Puntos: ${puntos}`;
+    
+    // Efecto "+1"
+    const masUno = document.createElement('div');
+    masUno.className = 'efecto-mas-uno';
+    masUno.textContent = '+1';
+    masUno.style.left = `${Math.random() * 100}%`;
+    this.parentElement.appendChild(masUno);
+    setTimeout(() => masUno.remove(), 1000);
+    
+    // Efecto hojas cayendo (5 hojas por clic)
+    for (let i = 0; i < 5 && hojasActivas < MAX_HOJAS; i++) {
+        crearHoja();
+    }
+    
+    // Efecto "hojas acumuladas" (cada 10 clics)
+    hojasAcumuladas++;
+    if (hojasAcumuladas % 10 === 0) {
+        agregarHojaAcumulada();
+    }
+});
+
+// Función optimizada para crear hojas cayendo
+function crearHoja() {
+    if (hojasActivas >= MAX_HOJAS) return;
+    
+    hojasActivas++;
+    const hoja = document.createElement('div');
+    hoja.className = 'hoja';
+    
+    const emojis = ['🍃', '🍂'];
+    hoja.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    hoja.style.fontSize = `${Math.random() * 20 + 15}px`;
+    hoja.style.left = `${Math.random() * 100}%`;
+    hoja.style.animationDuration = `${Math.random() * 3 + 2}s`;
+    
+    columnaHojas.appendChild(hoja);
+    
+    // Eliminar hoja cuando termine la animación
+    const removeHoja = () => {
+        hoja.remove();
+        hojasActivas--;
+        hoja.removeEventListener('animationend', removeHoja);
+    };
+    hoja.addEventListener('animationend', removeHoja);
+}
+
+// Función para hojas acumuladas
+function agregarHojaAcumulada() {
+    const hoja = document.createElement('div');
+    hoja.className = 'hoja-acumulada';
+    
+    const emojis = ['🍃', '🍂'];
+    hoja.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    hoja.style.fontSize = `${Math.random() * 50 + 30}px`;
+    hoja.style.left = `${Math.random() * 100}%`;
+    hoja.style.transform = 'translateY(100%)';
+    
+    columnaHojas.appendChild(hoja);
+    
+    setTimeout(() => {
+        hoja.style.transform = `translateY(-${Math.random() * 30}px) rotate(${Math.random() * 360}deg)`;
+    }, 100);
+}
+
+// Función para comprar animales
+function comprarAnimal(nombre, costo, puntosGenerados, intervalo) {
+    if (puntos >= costo) {
+        puntos -= costo;
+        elementoPuntos.textContent = `Puntos: ${puntos}`;
+        
+        // Actualizar contador
+        contadorAnimales[nombre] = (contadorAnimales[nombre] || 0) + 1;
+        document.getElementById(`contador-${nombre}`).textContent = contadorAnimales[nombre];
+        
+        // Generador de puntos con control de hojas
+        setInterval(() => {
+            puntos += puntosGenerados;
+            elementoPuntos.textContent = `Puntos: ${puntos}`;
+            
+            // Solo generar hoja con 30% de probabilidad por intervalo
+            if (Math.random() < 0.3 && hojasActivas < MAX_HOJAS) {
+                crearHoja();
+            }
+        }, intervalo);
+        
+        // Actualizar PPS
+        puntosPorSegundo += puntosGenerados / (intervalo / 1000);
+        elementoPPS.textContent = `PPS: ${puntosPorSegundo.toFixed(1)}`;
+        
+        // Efecto visual: hojas cayendo (solo 3 al comprar)
+        for (let i = 0; i < 3 && hojasActivas < MAX_HOJAS; i++) {
+            crearHoja();
+        }
+    } else {
+        alert("No tienes suficientes puntos :(");
+    }
+}
+
+// Lluvia suave basada en PPS
+function iniciarLluviaSuave() {
+    setInterval(() => {
+        if (hojasActivas < MAX_HOJAS * 0.7) { // Solo si hay capacidad
+            const probabilidad = Math.min(puntosPorSegundo / 50, 0.5); // Máx 50% de prob
+            if (Math.random() < probabilidad) {
+                crearHoja();
+            }
+        }
+    }, 1000);
+}
+// Objeto con tus elementos disponibles
+const elementosParque = {
+    arbol: {
+        imagenes: [
+            "imagenes/parque/lenga.png",
+            "imagenes/parque/arbol2.png"
+        ],
+        zIndex: 10
+    },
+    roca: {
+        imagenes: ["imagenes/parque/roca1.png"],
+        zIndex: 5
+    },
+    animal: {
+        imagenes: [
+            "imagenes/parque/guanaco.png",
+            "imagenes/parque/huemul.png"
+        ],
+        zIndex: 15
+    }
+};
+
+// Función para añadir elementos al parque
+function agregarElementoParque(tipo) {
+    const contenedor = document.getElementById('parque-container');
+    const elemento = elementosParque[tipo];
+    
+    if (!elemento) return;
+    
+    const img = document.createElement('img');
+    img.className = 'elemento-parque';
+    img.src = elemento.imagenes[Math.floor(Math.random() * elemento.imagenes.length)];
+    img.style.zIndex = elemento.zIndex;
+    
+    // Posición aleatoria (evitando bordes)
+    img.style.left = `${10 + Math.random() * 80}%`;
+    img.style.top = `${10 + Math.random() * 80}%`;
+    
+    // Tamaño aleatorio (entre 70% y 130% del tamaño base)
+    const escala = 0.7 + Math.random() * 0.6;
+    img.style.width = `${escala * 100}px`;
+    
+    contenedor.appendChild(img);
+}
+function comprarAnimal(nombre, costo, puntosGenerados, intervalo) {
+    if (puntos >= costo) {
+        puntos -= costo;
+        elementoPuntos.textContent = `Puntos: ${puntos}`;
+        
+        // Actualizar contador
+        contadorAnimales[nombre] = (contadorAnimales[nombre] || 0) + 1;
+        document.getElementById(`contador-${nombre}`).textContent = contadorAnimales[nombre];
+        
+        // Añadir animal al parque
+        agregarAnimalAParque(nombre);
+        
+        // Generador de puntos
+        setInterval(() => {
+            puntos += puntosGenerados;
+            elementoPuntos.textContent = `Puntos: ${puntos}`;
+        }, intervalo);
+        
+        // Actualizar PPS
+        puntosPorSegundo += puntosGenerados / (intervalo / 1000);
+        elementoPPS.textContent = `PPS: ${puntosPorSegundo.toFixed(1)}`;
+        
+        // Efecto visual: hojas cayendo
+        for (let i = 0; i < 3; i++) crearHoja();
+    } else {
+        alert("No tienes suficientes puntos :(");
+    }
+}
+
+// Función para añadir animales al parque
+function agregarAnimalAParque(nombre) {
+    const contenedorParque = document.getElementById('parque-container');
+    const img = document.createElement('img');
+    img.className = 'animal-en-parque';
+    img.src = `imagenes/${nombre}.jpg`; // Asume que tus imágenes tienen el mismo nombre que el ID
+    img.alt = nombre;
+
+        // Asignar capa según categoría
+    const zIndex = capasAnimales[nombre] || 20; // Valor por defecto
+    img.style.zIndex = zIndex;
+    
+    // Ajuste especial para elementos acuáticos
+    if(nombre === 'lago') {
+        img.style.filter = 'brightness(1.1)';
+        img.style.zIndex = 3; // Siempre debajo de casi todo
+    }
+    
+    // Posición aleatoria (evitando bordes)
+    img.style.left = `${5 + Math.random() * 90}%`;
+    img.style.top = `${5 + Math.random() * 90}%`;
+    
+    // Tamaño aleatorio (80% a 120% del tamaño base)
+    const escala = 0.8 + Math.random() * 0.4;
+    img.style.width = `${escala * 100}px`;
+    contenedorParque.appendChild(img);
+}
+const capasAnimales = {
+    // Animales grandes (arriba de todo)
+    "huemul": 40,
+    "guanaco": 35,
+    
+    // Animales medianos
+    "zorro_colorado": 30,
+    "zorro_gris": 30,
+    "gato": 30,
+    
+    // Animales pequeños (debajo de plantas)
+    "tuco": 15,
+    "chinchillon": 15,
+    "pichi": 15,
+    
+    // Plantas (abajo del todo)
+    "lenga": 5,
+    "nire": 5,
+    "coiron": 5,
+    "lago": 3
+};
+
+function agregarElementoEspecial(nombre, zIndexFijo) {
+    const elemento = document.createElement('img');
+    elemento.src = `imagenes/${nombre}.png`;
+    elemento.style.zIndex = zIndexFijo;
+    elemento.style.position = 'absolute';
+    // ... resto de configuración
+    document.getElementById('parque-container').appendChild(elemento);
+}
+iniciarLluviaSuave();
+</script>
+</body>
+</html>
