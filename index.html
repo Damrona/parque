@@ -318,6 +318,23 @@
                 height: 80px;
             }
         }
+        @media (max-width: 768px) {
+    #columna-parque {
+        min-height: 100vh;
+        overflow: visible;
+    }
+    
+    .parque-container {
+        min-height: 100%;
+        background-color: rgba(0, 0, 0, 0.2); /* Solo para debug */
+    }
+    
+    .animal-en-parque {
+        max-width: 80px !important;
+        max-height: 80px !important;
+        position: absolute !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -558,14 +575,6 @@ imagen.addEventListener('click', function() {
     }
 });
 
-// Detecta si es móvil y cambia las imágenes
-if (/Mobi|Android/i.test(navigator.userAgent)) {
-    document.querySelectorAll('.icono-animal').forEach(img => {
-        const src = img.src.replace('.png', '-mobile.png');
-        img.src = src;
-    });
-}
-
 // Función optimizada para crear hojas cayendo
 function crearHoja() {
     if (hojasActivas >= MAX_HOJAS) return;
@@ -658,19 +667,19 @@ function iniciarLluviaSuave() {
 const elementosParque = {
     arbol: {
         imagenes: [
-            "imagenes/parque/lenga.png",
-            "imagenes/parque/arbol2.png"
+            "imagenes/lenga.png",
+            "imagenes/arbol2.png"
         ],
         zIndex: 10
     },
     roca: {
-        imagenes: ["imagenes/parque/roca1.png"],
+        imagenes: ["imagenes/roca1.png"],
         zIndex: 5
     },
     animal: {
         imagenes: [
-            "imagenes/parque/guanaco.png",
-            "imagenes/parque/huemul.png"
+            "imagenes/guanaco.png",
+            "imagenes/huemul.png"
         ],
         zIndex: 15
     }
@@ -781,6 +790,74 @@ if (/Mobi|Android/i.test(navigator.userAgent)) {
     document.body.classList.remove('desktop');
     document.body.classList.add('mobile');
 }
+function agregarAnimalAParque(nombre) {
+    const contenedorParque = document.getElementById('parque-container');
+    
+    // Verifica si estamos en móvil
+    const esMovil = /Mobi|Android/i.test(navigator.userAgent);
+    
+    // Crea el elemento imagen
+    const img = document.createElement('img');
+    img.className = 'animal-en-parque';
+    img.alt = nombre;
+    
+    // Usa diferentes rutas para móvil si es necesario
+    const rutaBase = esMovil ? `imagenes/mobile/${nombre}.jpg` : `imagenes/${nombre}.jpg`;
+    
+    // Carga progresiva con fallback
+    const imgElement = new Image();
+    imgElement.onload = function() {
+        img.src = this.src;
+        
+        // Configuración de posición y tamaño
+        const left = 5 + Math.random() * 80;
+        const top = 10 + Math.random() * 70;
+        
+        img.style.left = `${left}%`;
+        img.style.top = `${top}%`;
+        img.style.width = esMovil ? '70px' : `${80 + Math.random() * 40}px`;
+        
+        // Configuración de capas
+        const capas = {
+            "lenga": 5, "nire": 5, "coiron": 5, "lago": 1,
+            "chinchillon": 10, "tuco": 10, "pichi": 10,
+            "zorroc": 15, "zorrog": 15, "gato": 15,
+            "guanaco": 20, "huemul": 20
+        };
+        
+        img.style.zIndex = capas[nombre] || 10;
+        
+        // Efecto especial para el lago
+        if(nombre === 'lago') {
+            img.style.filter = 'brightness(1.2) saturate(1.2)';
+        }
+        
+        contenedorParque.appendChild(img);
+        
+        // Efecto de aparición
+        img.style.opacity = '0';
+        setTimeout(() => {
+            img.style.transition = 'opacity 0.5s ease';
+            img.style.opacity = '1';
+        }, 50);
+    };
+    
+    imgElement.onerror = function() {
+        console.error('Error cargando imagen:', nombre);
+        // Mostrar placeholder si la imagen no carga
+        img.src = 'imagenes/placeholder.png';
+        contenedorParque.appendChild(img);
+    };
+    
+    imgElement.src = rutaBase;
+    
+    // Intento alternativo si falla la primera carga
+    setTimeout(() => {
+        if (!img.parentNode && !imgElement.src.includes('placeholder')) {
+            imgElement.src = `imagenes/${nombre}.jpg`;
+        }
+    }, 500);
+}
 
 function agregarElementoEspecial(nombre, zIndexFijo) {
     const elemento = document.createElement('img');
@@ -790,6 +867,7 @@ function agregarElementoEspecial(nombre, zIndexFijo) {
     // ... resto de configuración
     document.getElementById('parque-container').appendChild(elemento);
 }
+
 iniciarLluviaSuave();
 </script>
 </body>
