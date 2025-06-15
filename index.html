@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <title>Proyecto de Conservación Interactivo</title>
     <style>
@@ -81,6 +82,15 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             opacity: 0.9;
         }
+        @keyframes rebote {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.animacion-rebote {
+    animation: rebote 0.3s ease;
+}
         
         .puntos-conservacion {
             font-weight: bold;
@@ -422,7 +432,6 @@
     </div>
 
 <script>
-// Variables
 const contadorAnimales = {};
 let puntos = 0;
 let puntosPorSegundo = 0;
@@ -440,6 +449,12 @@ elementoPuntos.parentElement.insertBefore(elementoPPS, elementoPuntos.nextSiblin
 
 // Función para aumentar puntos y efectos
 imagen.addEventListener('click', function() {
+    // Añade animación de rebote
+    this.classList.add('animacion-rebote');
+    setTimeout(() => {
+        this.classList.remove('animacion-rebote');
+    }, 300);
+    
     puntos += 1;
     elementoPuntos.textContent = `Puntos: ${puntos}`;
     
