@@ -3,9 +3,78 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proyecto de Conservación Interactivo</title>
     <style>
+        /* Contenedor principal */
+.contenedor {
+    display: flex;
+    height: 100vh;
+    flex-direction: row; /* Default: horizontal en desktop */
+}
+
+/* Media query para móviles */
+@media (max-width: 768px) {
+    .contenedor {
+        flex-direction: column; /* Cambia a vertical en móviles */
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .columna {
+        width: 100% !important;
+        min-height: 100vh; /* Cada columna ocupa pantalla completa */
+        height: auto;
+        flex: none; /* Anula el flex:1 para móviles */
+    }
+    
+    /* Optimización de elementos para móviles */
+    .img-clickeable {
+        width: 120px !important;
+        height: 120px !important;
+    }
+    
+    .lista-animales {
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+    
+    /* Ajustes específicos para el parque en móviles */
+    #columna-parque {
+        overflow-x: hidden;
+    }
+    
+    .animal-en-parque {
+        max-width: 70px !important;
+        max-height: 70px !important;
+    }
+    
+    /* Mejora el scroll en móviles */
+    html {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Media query adicional para móviles pequeños */
+@media (max-width: 480px) {
+    .imagen-titulo {
+        max-height: 100px;
+    }
+    
+    .puntos-conservacion {
+        font-size: 16px;
+        padding: 6px 12px;
+    }
+    
+    .lista-animales li {
+        padding: 8px;
+        font-size: 14px;
+    }
+    
+    .icono-animal {
+        width: 40px !important;
+        height: 40px !important;
+    }
+}
         @media (hover: none) {
     button {
         min-height: 44px !important;
