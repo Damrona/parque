@@ -5,173 +5,23 @@
     <meta charset="UTF-8">
     <title>Proyecto de Conservación Interactivo</title>
     <style>
-        /* Contenedor principal */
-.contenedor {
-    display: flex;
-    height: 100vh;
-    flex-direction: row; /* Default: horizontal en desktop */
-}
-
-/* Scroll suave entre columnas en móviles */
-@media (max-width: 768px) {
-    html {
-        scroll-behavior: smooth;
-        scroll-snap-type: y mandatory;
-    }
-    
-    .columna {
-        scroll-snap-align: start;
-    }
-}
-
-/* Media query para móviles */
-@media (max-width: 768px) {
-    .contenedor {
-        flex-direction: column; /* Cambia a vertical en móviles */
-        height: auto;
-        min-height: 100vh;
-    }
-    
-    .columna {
-        width: 100% !important;
-        min-height: 100vh; /* Cada columna ocupa pantalla completa */
-        height: auto;
-        flex: none; /* Anula el flex:1 para móviles */
-    }
-    
-    /* Optimización de elementos para móviles */
-    .img-clickeable {
-        width: 120px !important;
-        height: 120px !important;
-    }
-    
-    .lista-animales {
-        max-height: 50vh;
-        overflow-y: auto;
-    }
-    
-    /* Ajustes específicos para el parque en móviles */
-    #columna-parque {
-        overflow-x: hidden;
-    }
-    
-    .animal-en-parque {
-        max-width: 70px !important;
-        max-height: 70px !important;
-    }
-    
-    /* Mejora el scroll en móviles */
-    html {
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* Media query adicional para móviles pequeños */
-@media (max-width: 480px) {
-    .imagen-titulo {
-        max-height: 100px;
-    }
-    
-    .puntos-conservacion {
-        font-size: 16px;
-        padding: 6px 12px;
-    }
-    
-    .lista-animales li {
-        padding: 8px;
-        font-size: 14px;
-    }
-    
-    .icono-animal {
-        width: 40px !important;
-        height: 40px !important;
-    }
-}
-        @media (hover: none) {
-    button {
-        min-height: 44px !important;
-        padding: 12px 20px !important;
-    }
-    
-    .img-clickeable {
-        width: 80px !important;
-        height: 80px !important;
-    }
-}
-        @media (max-width: 480px) {
-    #columna-parque {
-        overflow: visible;
-    }
-    
-    .parque-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-    }
-    
-    .animal-en-parque {
-        position: relative !important;
-        left: auto !important;
-        top: auto !important;
-        margin: 0 auto;
-    }
-}
-        @media (max-width: 768px) {
-    .contenedor {
-        flex-direction: column;
-        height: auto;
-    }
-    
-    .columna {
-        width: 100% !important;
-        height: auto;
-        min-height: 100vh;
-        padding: 15px !important;
-    }
-    
-    .img-clickeable {
-        width: 100px !important;
-        height: 100px !important;
-    }
-    
-    .lista-animales li {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .icono-animal {
-        width: 30px !important;
-        height: 30px !important;
-    }
-    
-    .animal-en-parque {
-        max-width: 60px !important;
-        max-height: 60px !important;
-    }
-}
-        .hoja {
-    will-change: transform;
-    position: absolute;
-    pointer-events: none;
-    z-index: 100;
-    animation-timing-function: linear;
-}
         body {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
             background: #f0f2f5;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         
         .contenedor {
             display: flex;
             height: 100vh;
+            flex-direction: row;
         }
         
         .columna {
             flex: 1;
-            padding: 0; /* Eliminamos el padding para la imagen superior */
+            padding: 0;
             box-sizing: border-box;
             color: white;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
@@ -206,12 +56,11 @@
         .columna:nth-child(2) { background-image: url("fondo2.png"); }
         .columna:nth-child(3) { background-image: url("fondo3.jpg"); }
         
-        /* Imagen superior (reemplaza el título "Conservación") */
         .imagen-titulo {
             width: 100%;
-            max-height: 140px; /* Ajusta esto según tu imagen */
+            max-height: 140px;
             object-fit: contain;
-            margin-top: 0px; /* Espacio mínimo arriba */
+            margin-top: 0px;
         }
         
         .img-container {
@@ -236,11 +85,6 @@
             opacity: 0.9;
         }
         
-        /* Animación al hacer clic */
-        .img-clickeable:active {
-            animation: rebote 0.4s ease;
-        }
-        
         @keyframes rebote {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(0.9); }
@@ -256,7 +100,6 @@
             letter-spacing: 1px;
         }
         
-        /* Efecto "+1" */
         .efecto-mas-uno {
             position: absolute;
             color: #4CAF50;
@@ -272,14 +115,13 @@
             100% { transform: translateY(-50px); opacity: 0; }
         }
         
-        /* Hojas cayendo (arreglado: ahora caen desde arriba) */
         .hoja {
             position: absolute;
             opacity: 0.6;
             z-index: 1;
             animation: caer linear forwards;
             pointer-events: none;
-            top: -50px; /* Inician arriba del todo */
+            top: -50px;
         }
         
         @keyframes caer {
@@ -287,434 +129,388 @@
             100% { transform: translateY(calc(100vh + 50px)) rotate(360deg); opacity: 0; }
         }
         
-        /* Hojas acumuladas (ajustadas para estar más abajo) */
         .hoja-acumulada {
             position: absolute;
             opacity: 0.3;
             z-index: 0;
             pointer-events: none;
             transition: transform 0.5s ease-out;
-            bottom: -20px; /* Más abajo */
+            bottom: -20px;
         }
-        /* Estilos para la tienda */
+        
         .tienda {
-    width: 100%;
-    padding: 10px;
-    text-align: center;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
         }
-
+        
         .lista-animales {
-    list-style: none;
-    padding: 0;
+            list-style: none;
+            padding: 0;
+            max-height: 80vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(16, 17, 82, 0.6);
         }
-
+        
+        .lista-animales::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .lista-animales::-webkit-scrollbar-thumb {
+            background-color: rgba(16, 17, 82, 0.6);
+            border-radius: 4px;
+        }
+        
         .lista-animales li {
-    margin: 10px 0;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 10px;
-    border-radius: 8px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-
+        
         .lista-animales button {
-    background: rgba(16, 17, 82, 0.6);
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    color: white;
-    font-weight: bold;
+            background: rgba(16, 17, 82, 0.6);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            flex-grow: 1;
         }
-
+        
         .lista-animales button:hover {
-    background: #45a049;
+            background: #45a049;
         }
+        
         .icono-animal {
-    width: 65px;
-    height: 65px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;
-    vertical-align: middle;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.lista-animales li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.lista-animales button {
-    flex-grow: 1;
-}
-/* Añade esto a tu CSS */
-.lista-animales {
-    max-height: 80vh; /* 60% del alto de pantalla */
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(16, 17, 82, 0.6);
-}
-
-/* Estilo para navegadores WebKit (Chrome, Safari) */
-.lista-animales::-webkit-scrollbar {
-    width: 8px;
-}
-.lista-animales::-webkit-scrollbar-thumb {
-    background-color: rgba(16, 17, 82, 0.6);
-    border-radius: 4px;
-}
-.contenedor-icono {
-    position: relative;
-    display: inline-block;
-}
-
-.contador-compras {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-    border: 2px solid #4CAF50;
-}
-.parque-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-.elemento-parque {
-    position: absolute;
-    max-width: 100px;
-    max-height: 100px;
-    pointer-events: none;
-    user-select: none;
-    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-    transition: transform 0.5s ease;
-}
-
-.elemento-parque:hover {
-    transform: scale(1.1) rotate(5deg);
-    z-index: 100;
-}
-#columna-parque {
-    position: relative;
-    overflow: hidden; /* Para que no se salgan los elementos */
-}
-
-.animal-en-parque {
-    position: absolute;
-    max-width: 100px;
-    max-height: 100px;
-    pointer-events: none;
-    transition: transform 0.3s ease;
-    z-index: 10;
-}
-
-.animal-en-parque:hover {
-    transform: scale(1.1);
-    z-index: 100;
-    filter: drop-shadow(0 0 5px rgba(255,255,0,0.7));
-}
-/* Estilos para las capas */
-#parque-container {
-    perspective: 1000px; /* Da sensación de profundidad */
-}
-
-.animal-en-parque {
-    transition: all 0.5s ease;
-    transform-style: preserve-3d;
-}
-
-/* Efecto de sombra para profundidad */
-.animal-en-parque[style*="z-index: 5"], 
-.animal-en-parque[style*="z-index: 3"] {
-    filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.3));
-}
-
-.animal-en-parque[style*="z-index: 30"],
-.animal-en-parque[style*="z-index: 40"] {
-    filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
-}
-/* Elimina el meta viewport duplicado (solo deja uno) */
-
-/* Contenedor principal */
-.contenedor {
-    display: flex;
-    height: 100vh;
-    flex-direction: row; /* Default: horizontal en desktop */
-}
-
-/* Media query para móviles */
-@media (max-width: 768px) {
-    .contenedor {
-        flex-direction: column; /* Cambia a vertical en móviles */
-        height: auto;
-        min-height: 100vh;
-    }
-    
-    .columna {
-        width: 100% !important;
-        min-height: 100vh; /* Cada columna ocupa pantalla completa */
-        height: auto;
-        flex: none; /* Anula el flex:1 para móviles */
-    }
-    
-    /* Optimización de elementos para móviles */
-    .img-clickeable {
-        width: 120px !important;
-        height: 120px !important;
-    }
-    
-    .lista-animales {
-        max-height: 50vh;
-        overflow-y: auto;
-    }
-    
-    /* Ajustes específicos para el parque en móviles */
-    #columna-parque {
-        overflow-x: hidden;
-    }
-    
-    .animal-en-parque {
-        max-width: 70px !important;
-        max-height: 70px !important;
-    }
-    
-    /* Mejora el scroll en móviles */
-    html {
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* Media query adicional para móviles pequeños */
-@media (max-width: 480px) {
-    .imagen-titulo {
-        max-height: 100px;
-    }
-    
-    .puntos-conservacion {
-        font-size: 16px;
-        padding: 6px 12px;
-    }
-    
-    .lista-animales li {
-        padding: 8px;
-        font-size: 14px;
-    }
-    
-    .icono-animal {
-        width: 40px !important;
-        height: 40px !important;
-    }
-}
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .contenedor-icono {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .contador-compras {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid #4CAF50;
+        }
+        
+        .parque-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        
+        .animal-en-parque {
+            position: absolute;
+            max-width: 100px;
+            max-height: 100px;
+            pointer-events: none;
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+            z-index: 10;
+        }
+        
+        .animal-en-parque:hover {
+            transform: scale(1.1);
+            z-index: 100;
+            filter: drop-shadow(0 0 5px rgba(255,255,0,0.7));
+        }
+        
+        /* Media queries para móviles */
+        @media (max-width: 768px) {
+            html {
+                scroll-behavior: smooth;
+                scroll-snap-type: y mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .contenedor {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .columna {
+                width: 100%;
+                min-height: 100vh;
+                height: auto;
+                flex: none;
+                scroll-snap-align: start;
+            }
+            
+            .img-clickeable {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .lista-animales {
+                max-height: 50vh;
+            }
+            
+            .animal-en-parque {
+                max-width: 70px;
+                max-height: 70px;
+            }
+            
+            @media (max-width: 480px) {
+                .imagen-titulo {
+                    max-height: 100px;
+                }
+                
+                .puntos-conservacion {
+                    font-size: 16px;
+                    padding: 6px 12px;
+                }
+                
+                .lista-animales li {
+                    padding: 8px;
+                    font-size: 14px;
+                }
+                
+                .icono-animal {
+                    width: 40px;
+                    height: 40px;
+                }
+                
+                .animal-en-parque {
+                    max-width: 50px;
+                    max-height: 50px;
+                }
+            }
+        }
+        
+        @media (hover: none) {
+            button {
+                min-height: 44px;
+                padding: 12px 20px;
+            }
+            
+            .img-clickeable {
+                width: 80px;
+                height: 80px;
+            }
+        }
     </style>
 </head>
-<body class="desktop">
-                <div class="contenedor">
-                    <!-- Columna 1 (Interactiva) -->
-                    <div class="columna" id="columna-hojas">
-                        <!-- Imagen superior (reemplaza el título) -->
-                        <img src="titulo-conservacion.png" class="imagen-titulo" alt="Conservación">
-                        
-                        <div class="img-container">
-                            <div class="puntos-conservacion" id="puntos">Puntos: 0</div>
-                            <img 
-                                src="imagen-ejemplo.jpg" 
-                                class="img-clickeable" 
-                                alt="Contribuye" 
-                                id="imagen-click"
-                            >
+<body>
+    <div class="contenedor">
+        <!-- Columna 1 (Interactiva) -->
+        <div class="columna" id="columna-hojas">
+            <img src="titulo-conservacion.png" class="imagen-titulo" alt="Conservación">
+            
+            <div class="img-container">
+                <div class="puntos-conservacion" id="puntos">Puntos: 0</div>
+                <img src="imagen-ejemplo.jpg" class="img-clickeable" alt="Contribuye" id="imagen-click">
+            </div>
+        </div>
+        
+        <!-- Columna 2 (Parque) -->
+        <div class="columna" id="columna-parque">
+            <div class="parque-container" id="parque-container"></div>
+        </div>
+        
+        <!-- Columna 3 (Tienda) -->
+        <div class="columna">
+            <img src="tienda-epica.jpg" class="imagen-titulo" alt="Tienda Épica">
+            <div class="tienda">
+                <ul class="lista-animales">
+                    <!-- Lenga -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/lenga.png" class="icono-animal" alt="Lenga">
+                            <span class="contador-compras" id="contador-lenga">0</span>
                         </div>
-                    </div>
+                        <button onclick="comprarAnimal('lenga', 25, 2, 5000)">
+                            Lenga - 25 pts
+                        </button>
+                        <span>+2 pts/5s</span>
+                    </li>
                     
-                    <!-- Columnas 2 y 3 -->
-                <div class="columna" id="columna-parque">
-                    <!-- Contenedor para los elementos del parque -->
-                    <div class="parque-container" id="parque-container"></div>
-                </div>
+                    <!-- Lago -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/lago.png" class="icono-animal" alt="Lago">
+                            <span class="contador-compras" id="contador-lago">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('lago', 50, 5, 10000)">
+                            Lago - 50 pts
+                        </button>
+                        <span>+5 pts/10s</span>
+                    </li>
                     
-                <div class="columna">
-                    <img src="tienda-epica.jpg" class="imagen-titulo" alt="Tienda Épica">
-                    <div class="tienda">
-                    <ul class="lista-animales">
-                <!-- Lenga -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/lenga.png" class="icono-animal" alt="Lenga">
-                        <span class="contador-compras" id="contador-lenga">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('lenga', 25, 2, 5000)">
-                        Lenga - 25 pts
-                    </button>
-                    <span>+2 pts/5s</span>
-                </li>
-                
-                <!-- Lago -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/lago.png" class="icono-animal" alt="Lago">
-                        <span class="contador-compras" id="contador-lago">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('lago', 50, 5, 10000)">
-                        Lago - 50 pts
-                    </button>
-                    <span>+5 pts/10s</span>
-                </li>
-                
-                <!-- Ñire -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/nire.png" class="icono-animal" alt="Ñire">
-                        <span class="contador-compras" id="contador-nire">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('nire', 100, 10, 12000)">
-                        Ñire - 100 pts
-                    </button>
-                    <span>+10 pts/12s</span>
-                </li>
-                
-                <!-- Coiron -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/coiron.png" class="icono-animal" alt="Coiron">
-                        <span class="contador-compras" id="contador-coiron">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('coiron', 150, 15, 15000)">
-                        Coiron - 150 pts
-                    </button>
-                    <span>+15 pts/15s</span>
-                </li>
-                
-                <!-- Chinchillón Anaranjado -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/chinchillon.png" class="icono-animal" alt="Chinchillón">
-                        <span class="contador-compras" id="contador-chinchillon">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('chinchillon', 200, 12, 13000)">
-                        Chinchillón Anaranjado - 200 pts
-                    </button>
-                    <span>+12 pts/13s</span>
-                </li>
-                
-                <!-- Tuco-tuco Magallánico -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/tuco.png" class="icono-animal" alt="Tuco-tuco">
-                        <span class="contador-compras" id="contador-tuco">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('tuco', 250, 20, 13000)">
-                        Tuco-tuco Magallánico - 250 pts
-                    </button>
-                    <span>+20 pts/13s</span>
-                </li>
-                
-                <!-- Zorro Colorado -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/zorroc.png" class="icono-animal" alt="Zorro Colorado">
-                        <span class="contador-compras" id="contador-zorroc">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('zorroc', 300, 40, 13000)">
-                        Zorro Colorado - 300 pts
-                    </button>
-                    <span>+40 pts/13s</span>
-                </li>
-                
-                <!-- Zorro Gris -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/zorrog.png" class="icono-animal" alt="Zorro Gris">
-                        <span class="contador-compras" id="contador-zorrog">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('zorrog', 500, 60, 15000)">
-                        Zorro Gris - 500 pts
-                    </button>
-                    <span>+60 pts/15s</span>
-                </li>
-                
-                <!-- Gato Montes -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/gato.png" class="icono-animal" alt="Gato Montes">
-                        <span class="contador-compras" id="contador-gato">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('gato', 750, 80, 18000)">
-                        Gato Montes - 750 pts
-                    </button>
-                    <span>+80 pts/18s</span>
-                </li>
-                
-                <!-- Huron Menor -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/huron.png" class="icono-animal" alt="Huron Menor">
-                        <span class="contador-compras" id="contador-huron">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('huron', 900, 110, 19000)">
-                        Huron Menor - 900 pts
-                    </button>
-                    <span>+110 pts/19s</span>
-                </li>
-                
-                <!-- Zorrino Patagonico -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/zorrino.png" class="icono-animal" alt="Zorrino Patagonico">
-                        <span class="contador-compras" id="contador-zorrino">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('zorrino', 1300, 150, 20000)">
-                        Zorrino Patagonico - 1300 pts
-                    </button>
-                    <span>+150 pts/20s</span>
-                </li>
-                
-                <!-- Pichi Patagonico -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/pichi.png" class="icono-animal" alt="Pichi Patagonico">
-                        <span class="contador-compras" id="contador-pichi">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('pichi', 1500, 150, 18000)">
-                        Pichi Patagonico - 1500 pts
-                    </button>
-                    <span>+150 pts/18s</span>
-                </li>
-                
-                <!-- Guanaco -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/guanaco.png" class="icono-animal" alt="Guanaco">
-                        <span class="contador-compras" id="contador-guanaco">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('guanaco', 2000, 200, 5000)">
-                        Guanaco - 2000 pts
-                    </button>
-                    <span>+200 pts/5s</span>
-                </li>
-                
-                <!-- Huemul -->
-                <li>
-                    <div class="contenedor-icono">
-                        <img src="imagenes/huemul.png" class="icono-animal" alt="Huemul">
-                        <span class="contador-compras" id="contador-huemul">0</span>
-                    </div>
-                    <button onclick="comprarAnimal('huemul', 3000, 500, 10000)">
-                        Huemul - 3000 pts
-                    </button>
-                    <span>+500 pts/10s</span>
-                </li>
-            </ul>
+                    <!-- Ñire -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/nire.png" class="icono-animal" alt="Ñire">
+                            <span class="contador-compras" id="contador-nire">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('nire', 100, 10, 12000)">
+                            Ñire - 100 pts
+                        </button>
+                        <span>+10 pts/12s</span>
+                    </li>
+                    
+                    <!-- Coiron -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/coiron.png" class="icono-animal" alt="Coiron">
+                            <span class="contador-compras" id="contador-coiron">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('coiron', 150, 15, 15000)">
+                            Coiron - 150 pts
+                        </button>
+                        <span>+15 pts/15s</span>
+                    </li>
+                    
+                    <!-- Chinchillón Anaranjado -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/chinchillon.png" class="icono-animal" alt="Chinchillón">
+                            <span class="contador-compras" id="contador-chinchillon">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('chinchillon', 200, 12, 13000)">
+                            Chinchillón Anaranjado - 200 pts
+                        </button>
+                        <span>+12 pts/13s</span>
+                    </li>
+                    
+                    <!-- Tuco-tuco Magallánico -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/tuco.png" class="icono-animal" alt="Tuco-tuco">
+                            <span class="contador-compras" id="contador-tuco">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('tuco', 250, 20, 13000)">
+                            Tuco-tuco Magallánico - 250 pts
+                        </button>
+                        <span>+20 pts/13s</span>
+                    </li>
+                    
+                    <!-- Zorro Colorado -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/zorroc.png" class="icono-animal" alt="Zorro Colorado">
+                            <span class="contador-compras" id="contador-zorroc">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('zorroc', 300, 40, 13000)">
+                            Zorro Colorado - 300 pts
+                        </button>
+                        <span>+40 pts/13s</span>
+                    </li>
+                    
+                    <!-- Zorro Gris -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/zorrog.png" class="icono-animal" alt="Zorro Gris">
+                            <span class="contador-compras" id="contador-zorrog">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('zorrog', 500, 60, 15000)">
+                            Zorro Gris - 500 pts
+                        </button>
+                        <span>+60 pts/15s</span>
+                    </li>
+                    
+                    <!-- Gato Montes -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/gato.png" class="icono-animal" alt="Gato Montes">
+                            <span class="contador-compras" id="contador-gato">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('gato', 750, 80, 18000)">
+                            Gato Montes - 750 pts
+                        </button>
+                        <span>+80 pts/18s</span>
+                    </li>
+                    
+                    <!-- Huron Menor -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/huron.png" class="icono-animal" alt="Huron Menor">
+                            <span class="contador-compras" id="contador-huron">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('huron', 900, 110, 19000)">
+                            Huron Menor - 900 pts
+                        </button>
+                        <span>+110 pts/19s</span>
+                    </li>
+                    
+                    <!-- Zorrino Patagonico -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/zorrino.png" class="icono-animal" alt="Zorrino Patagonico">
+                            <span class="contador-compras" id="contador-zorrino">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('zorrino', 1300, 150, 20000)">
+                            Zorrino Patagonico - 1300 pts
+                        </button>
+                        <span>+150 pts/20s</span>
+                    </li>
+                    
+                    <!-- Pichi Patagonico -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/pichi.png" class="icono-animal" alt="Pichi Patagonico">
+                            <span class="contador-compras" id="contador-pichi">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('pichi', 1500, 150, 18000)">
+                            Pichi Patagonico - 1500 pts
+                        </button>
+                        <span>+150 pts/18s</span>
+                    </li>
+                    
+                    <!-- Guanaco -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/guanaco.png" class="icono-animal" alt="Guanaco">
+                            <span class="contador-compras" id="contador-guanaco">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('guanaco', 2000, 200, 5000)">
+                            Guanaco - 2000 pts
+                        </button>
+                        <span>+200 pts/5s</span>
+                    </li>
+                    
+                    <!-- Huemul -->
+                    <li>
+                        <div class="contenedor-icono">
+                            <img src="imagenes/huemul.png" class="icono-animal" alt="Huemul">
+                            <span class="contador-compras" id="contador-huemul">0</span>
+                        </div>
+                        <button onclick="comprarAnimal('huemul', 3000, 500, 10000)">
+                            Huemul - 3000 pts
+                        </button>
+                        <span>+500 pts/10s</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
