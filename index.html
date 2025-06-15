@@ -618,40 +618,6 @@ function agregarHojaAcumulada() {
     }, 100);
 }
 
-// Función para comprar animales
-function comprarAnimal(nombre, costo, puntosGenerados, intervalo) {
-    if (puntos >= costo) {
-        puntos -= costo;
-        elementoPuntos.textContent = `Puntos: ${puntos}`;
-        
-        // Actualizar contador
-        contadorAnimales[nombre] = (contadorAnimales[nombre] || 0) + 1;
-        document.getElementById(`contador-${nombre}`).textContent = contadorAnimales[nombre];
-        
-        // Generador de puntos con control de hojas
-        setInterval(() => {
-            puntos += puntosGenerados;
-            elementoPuntos.textContent = `Puntos: ${puntos}`;
-            
-            // Solo generar hoja con 30% de probabilidad por intervalo
-            if (Math.random() < 0.3 && hojasActivas < MAX_HOJAS) {
-                crearHoja();
-            }
-        }, intervalo);
-        
-        // Actualizar PPS
-        puntosPorSegundo += puntosGenerados / (intervalo / 1000);
-        elementoPPS.textContent = `PPS: ${puntosPorSegundo.toFixed(1)}`;
-        
-        // Efecto visual: hojas cayendo (solo 3 al comprar)
-        for (let i = 0; i < 3 && hojasActivas < MAX_HOJAS; i++) {
-            crearHoja();
-        }
-    } else {
-        alert("No tienes suficientes puntos :(");
-    }
-}
-
 // Lluvia suave basada en PPS
 function iniciarLluviaSuave() {
     setInterval(() => {
@@ -686,26 +652,63 @@ const elementosParque = {
 };
 
 // Función para añadir elementos al parque
-function agregarElementoParque(tipo) {
-    const contenedor = document.getElementById('parque-container');
-    const elemento = elementosParque[tipo];
-    
-    if (!elemento) return;
-    
+function agregarAnimalAParque(nombre) {
+    const contenedorParque = document.getElementById('parque-container');
+    if (!contenedorParque) {
+        console.error('No se encontró el contenedor del parque');
+        return;
+    }
+
     const img = document.createElement('img');
-    img.className = 'elemento-parque';
-    img.src = elemento.imagenes[Math.floor(Math.random() * elemento.imagenes.length)];
-    img.style.zIndex = elemento.zIndex;
+    img.className = 'animal-en-parque';
+    img.alt = nombre;
     
-    // Posición aleatoria (evitando bordes)
-    img.style.left = `${10 + Math.random() * 80}%`;
-    img.style.top = `${10 + Math.random() * 80}%`;
+    // Verificar si la imagen existe, sino usar placeholder
+    const rutaBase = `imagenes/${nombre}.png`;
+    const placeholder = 'imagenes/placeholder.png';
     
-    // Tamaño aleatorio (entre 70% y 130% del tamaño base)
-    const escala = 0.7 + Math.random() * 0.6;
-    img.style.width = `${escala * 100}px`;
-    
-    contenedor.appendChild(img);
+    // Crear elemento de imagen para verificar carga
+    const testImage = new Image();
+    testImage.onload = function() {
+        img.src = rutaBase;
+        agregarAlParque(img);
+    };
+    testImage.onerror = function() {
+        console.warn(`Imagen no encontrada: ${rutaBase}, usando placeholder`);
+        img.src = placeholder;
+        agregarAlParque(img);
+    };
+    testImage.src = rutaBase;
+
+    function agregarAlParque(imgElement) {
+        // Configuración de posición y tamaño
+        const left = 5 + Math.random() * 80;
+        const top = 10 + Math.random() * 70;
+        
+        imgElement.style.left = `${left}%`;
+        imgElement.style.top = `${top}%`;
+        imgElement.style.width = '100px'; // Tamaño base
+        
+        // Configuración de capas
+        const capas = {
+            "lenga": 5, "nire": 5, "coiron": 5, "lago": 1,
+            "chinchillon": 10, "tuco": 10, "pichi": 10,
+            "zorroc": 15, "zorrog": 15, "gato": 15,
+            "guanaco": 20, "huemul": 20
+        };
+        
+        imgElement.style.zIndex = capas[nombre] || 10;
+        imgElement.style.position = 'absolute';
+        
+        // Asegurar que sea visible
+        imgElement.style.opacity = '1';
+        imgElement.style.display = 'block';
+        
+        contenedorParque.appendChild(imgElement);
+        
+        // Debug
+        console.log(`Animal agregado al parque: ${nombre}`);
+    }
 }
 function comprarAnimal(nombre, costo, puntosGenerados, intervalo) {
     if (puntos >= costo) {
