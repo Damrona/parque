@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <title>Proyecto de Conservación Interactivo</title>
     <style>
@@ -10,13 +9,11 @@
             padding: 0;
             font-family: 'Arial', sans-serif;
             background: #f0f2f5;
-            overflow-x: hidden;
         }
         
         .contenedor {
             display: flex;
             height: 100vh;
-            flex-direction: row;
         }
         
         .columna {
@@ -85,11 +82,6 @@
             opacity: 0.9;
         }
         
-        @keyframes rebote {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(0.9); }
-        }
-        
         .puntos-conservacion {
             font-weight: bold;
             font-size: 20px;
@@ -127,15 +119,6 @@
         @keyframes caer {
             0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
             100% { transform: translateY(calc(100vh + 50px)) rotate(360deg); opacity: 0; }
-        }
-        
-        .hoja-acumulada {
-            position: absolute;
-            opacity: 0.3;
-            z-index: 0;
-            pointer-events: none;
-            transition: transform 0.5s ease-out;
-            bottom: -20px;
         }
         
         .tienda {
@@ -243,115 +226,6 @@
             z-index: 100;
             filter: drop-shadow(0 0 5px rgba(255,255,0,0.7));
         }
-        
-        /* Media queries para móviles */
-        @media (max-width: 768px) {
-            html {
-                scroll-behavior: smooth;
-                scroll-snap-type: y mandatory;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .contenedor {
-                flex-direction: column;
-                height: auto;
-                min-height: 100vh;
-            }
-            
-            .columna {
-                width: 100%;
-                min-height: 100vh;
-                height: auto;
-                flex: none;
-                scroll-snap-align: start;
-            }
-            
-            .img-clickeable {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .lista-animales {
-                max-height: 50vh;
-            }
-            
-            .animal-en-parque {
-                max-width: 70px;
-                max-height: 70px;
-            }
-            
-            @media (max-width: 480px) {
-                .imagen-titulo {
-                    max-height: 100px;
-                }
-                
-                .puntos-conservacion {
-                    font-size: 16px;
-                    padding: 6px 12px;
-                }
-                
-                .lista-animales li {
-                    padding: 8px;
-                    font-size: 14px;
-                }
-                
-                .icono-animal {
-                    width: 40px;
-                    height: 40px;
-                }
-                
-                .animal-en-parque {
-                    max-width: 50px;
-                    max-height: 50px;
-                }
-            }
-        }
-        
-        @media (hover: none) {
-            button {
-                min-height: 44px;
-                padding: 12px 20px;
-            }
-            
-            .img-clickeable {
-                width: 80px;
-                height: 80px;
-            }
-        }
-        @media (max-width: 768px) {
-    #columna-parque {
-        min-height: 100vh;
-        overflow: visible;
-    }
-    
-    .parque-container {
-        min-height: 100%;
-        background-color: rgba(0, 0, 0, 0.2); /* Solo para debug */
-    }
-    
-    .animal-en-parque {
-        max-width: 80px !important;
-        max-height: 80px !important;
-        position: absolute !important;
-    }
-    
-}
-        @media (max-width: 768px) {
-            #columna-parque {
-                min-height: 100vh;
-                overflow: visible;
-            }
-            
-            .parque-container {
-                min-height: 100%;
-            }
-            
-            .animal-en-parque {
-                max-width: 80px !important;
-                max-height: 80px !important;
-                position: absolute !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -359,7 +233,6 @@
         <!-- Columna 1 (Interactiva) -->
         <div class="columna" id="columna-hojas">
             <img src="titulo-conservacion.png" class="imagen-titulo" alt="Conservación">
-            
             <div class="img-container">
                 <div class="puntos-conservacion" id="puntos">Puntos: 0</div>
                 <img src="imagen-ejemplo.jpg" class="img-clickeable" alt="Contribuye" id="imagen-click">
@@ -556,9 +429,8 @@ let puntosPorSegundo = 0;
 const imagen = document.getElementById('imagen-click');
 const elementoPuntos = document.getElementById('puntos');
 const columnaHojas = document.getElementById('columna-hojas');
-let hojasAcumuladas = 0;
 let hojasActivas = 0;
-const MAX_HOJAS = 30; // Límite máximo de hojas simultáneas
+const MAX_HOJAS = 30;
 
 // Elemento para mostrar PPS
 const elementoPPS = document.createElement('div');
@@ -568,11 +440,9 @@ elementoPuntos.parentElement.insertBefore(elementoPPS, elementoPuntos.nextSiblin
 
 // Función para aumentar puntos y efectos
 imagen.addEventListener('click', function() {
-    // Aumentar 1 punto
     puntos += 1;
     elementoPuntos.textContent = `Puntos: ${puntos}`;
     
-    // Efecto "+1"
     const masUno = document.createElement('div');
     masUno.className = 'efecto-mas-uno';
     masUno.textContent = '+1';
@@ -580,15 +450,8 @@ imagen.addEventListener('click', function() {
     this.parentElement.appendChild(masUno);
     setTimeout(() => masUno.remove(), 1000);
     
-    // Efecto hojas cayendo (5 hojas por clic)
     for (let i = 0; i < 5 && hojasActivas < MAX_HOJAS; i++) {
         crearHoja();
-    }
-    
-    // Efecto "hojas acumuladas" (cada 10 clics)
-    hojasAcumuladas++;
-    if (hojasAcumuladas % 10 === 0) {
-        agregarHojaAcumulada();
     }
 });
 
@@ -608,7 +471,6 @@ function crearHoja() {
     
     columnaHojas.appendChild(hoja);
     
-    // Eliminar hoja cuando termine la animación
     const removeHoja = () => {
         hoja.remove();
         hojasActivas--;
@@ -617,143 +479,16 @@ function crearHoja() {
     hoja.addEventListener('animationend', removeHoja);
 }
 
-// Función para hojas acumuladas
-function agregarHojaAcumulada() {
-    const hoja = document.createElement('div');
-    hoja.className = 'hoja-acumulada';
-    
-    const emojis = ['🍃', '🍂'];
-    hoja.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    hoja.style.fontSize = `${Math.random() * 50 + 30}px`;
-    hoja.style.left = `${Math.random() * 100}%`;
-    hoja.style.transform = 'translateY(100%)';
-    
-    columnaHojas.appendChild(hoja);
-    
-    setTimeout(() => {
-        hoja.style.transform = `translateY(-${Math.random() * 30}px) rotate(${Math.random() * 360}deg)`;
-    }, 100);
-}
-
 // Lluvia suave basada en PPS
 function iniciarLluviaSuave() {
     setInterval(() => {
-        if (hojasActivas < MAX_HOJAS * 0.7) { // Solo si hay capacidad
-            const probabilidad = Math.min(puntosPorSegundo / 50, 0.5); // Máx 50% de prob
+        if (hojasActivas < MAX_HOJAS * 0.7) {
+            const probabilidad = Math.min(puntosPorSegundo / 50, 0.5);
             if (Math.random() < probabilidad) {
                 crearHoja();
             }
         }
     }, 1000);
-}
-// Objeto con tus elementos disponibles
-const elementosParque = {
-    arbol: {
-        imagenes: [
-            "imagenes/lenga.png",
-            "imagenes/arbol2.png"
-        ],
-        zIndex: 10
-    },
-    roca: {
-        imagenes: ["imagenes/roca1.png"],
-        zIndex: 5
-    },
-    animal: {
-        imagenes: [
-            "imagenes/guanaco.png",
-            "imagenes/huemul.png"
-        ],
-        zIndex: 15
-    }
-};
-
-// Función para añadir elementos al parque
-function agregarAnimalAParque(nombre) {
-    const contenedorParque = document.getElementById('parque-container');
-    if (!contenedorParque) {
-        console.error('No se encontró el contenedor del parque');
-        return;
-    }
-
-    const img = document.createElement('img');
-    img.className = 'animal-en-parque';
-    img.alt = nombre;
-    
-    // Verificar si la imagen existe, sino usar placeholder
-    const rutaBase = `imagenes/${nombre}.png`;
-    const placeholder = 'imagenes/placeholder.png';
-    
-    // Crear elemento de imagen para verificar carga
-    const testImage = new Image();
-    testImage.onload = function() {
-        img.src = rutaBase;
-        agregarAlParque(img);
-    };
-    testImage.onerror = function() {
-        console.warn(`Imagen no encontrada: ${rutaBase}, usando placeholder`);
-        img.src = placeholder;
-        agregarAlParque(img);
-    };
-    testImage.src = rutaBase;
-
-    function agregarAlParque(imgElement) {
-        // Configuración de posición y tamaño
-        const left = 5 + Math.random() * 80;
-        const top = 10 + Math.random() * 70;
-        
-        imgElement.style.left = `${left}%`;
-        imgElement.style.top = `${top}%`;
-        imgElement.style.width = '100px'; // Tamaño base
-        
-        // Configuración de capas
-        const capas = {
-            "lenga": 5, "nire": 5, "coiron": 5, "lago": 1,
-            "chinchillon": 10, "tuco": 10, "pichi": 10,
-            "zorroc": 15, "zorrog": 15, "gato": 15,
-            "guanaco": 20, "huemul": 20
-        };
-        
-        imgElement.style.zIndex = capas[nombre] || 10;
-        imgElement.style.position = 'absolute';
-        
-        // Asegurar que sea visible
-        imgElement.style.opacity = '1';
-        imgElement.style.display = 'block';
-        
-        contenedorParque.appendChild(imgElement);
-        
-        // Debug
-        console.log(`Animal agregado al parque: ${nombre}`);
-    }
-}
-function comprarAnimal(nombre, costo, puntosGenerados, intervalo) {
-    if (puntos >= costo) {
-        puntos -= costo;
-        elementoPuntos.textContent = `Puntos: ${puntos}`;
-        
-        // Actualizar contador
-        contadorAnimales[nombre] = (contadorAnimales[nombre] || 0) + 1;
-        document.getElementById(`contador-${nombre}`).textContent = contadorAnimales[nombre];
-        
-        // Añadir animal al parque
-        agregarAnimalAParque(nombre);
-        
-        // Generador de puntos
-        setInterval(() => {
-            puntos += puntosGenerados;
-            elementoPuntos.textContent = `Puntos: ${puntos}`;
-        }, intervalo);
-        
-        // Actualizar PPS
-        puntosPorSegundo += puntosGenerados / (intervalo / 1000);
-        elementoPPS.textContent = `PPS: ${puntosPorSegundo.toFixed(1)}`;
-        
-        // Efecto visual
-        for (let i = 0; i < 3; i++) crearHoja();
-    } else {
-        alert("¡Necesitas más puntos para esto!");
-    }
 }
 
 // Función para añadir animales al parque
@@ -761,83 +496,9 @@ function agregarAnimalAParque(nombre) {
     const contenedorParque = document.getElementById('parque-container');
     const img = document.createElement('img');
     img.className = 'animal-en-parque';
-    img.src = `imagenes/${nombre}.jpg`; // Asume que tus imágenes tienen el mismo nombre que el ID
     img.alt = nombre;
-
-        // Asignar capa según categoría
-    const zIndex = capasAnimales[nombre] || 20; // Valor por defecto
-    img.style.zIndex = zIndex;
+    img.src = `imagenes/${nombre}.jpg`;
     
-    // Ajuste especial para elementos acuáticos
-    if(nombre === 'lago') {
-        img.style.filter = 'brightness(1.1)';
-        img.style.zIndex = 3; // Siempre debajo de casi todo
-    }
-    
-    // Posición aleatoria (evitando bordes)
-    img.style.left = `${5 + Math.random() * 90}%`;
-    img.style.top = `${5 + Math.random() * 90}%`;
-    
-    // Tamaño aleatorio (80% a 120% del tamaño base)
-    const escala = 0.8 + Math.random() * 0.4;
-    img.style.width = `${escala * 100}px`;
-    contenedorParque.appendChild(img);
-}
-const capasAnimales = {
-    // Animales grandes (arriba de todo)
-    "huemul": 40,
-    "guanaco": 35,
-    
-    // Animales medianos
-    "zorro_colorado": 30,
-    "zorro_gris": 30,
-    "gato": 30,
-    
-    // Animales pequeños (debajo de plantas)
-    "tuco": 15,
-    "chinchillon": 15,
-    "pichi": 15,
-    
-    // Plantas (abajo del todo)
-    "lenga": 40,
-    "nire": 40,
-    "coiron": 2,
-    "lago": 1
-};
-
-// Detecta móviles y añade clase al body
-if (/Mobi|Android/i.test(navigator.userAgent)) {
-    document.body.classList.remove('desktop');
-    document.body.classList.add('mobile');
-}
-function agregarAnimalAParque(nombre) {
-    const contenedorParque = document.getElementById('parque-container');
-    if (!contenedorParque) {
-        console.error('Contenedor del parque no encontrado');
-        return;
-    }
-    
-
-    const img = document.createElement('img');
-    img.className = 'animal-en-parque';
-    img.alt = nombre;
-    
-    // Usar siempre la misma ruta de imágenes (eliminamos la distinción móvil/desktop)
-    const ruta = `imagenes/${nombre}.png`;
-    img.src = ruta;
-    
-    // Configuración de posición y tamaño
-    const left = 5 + Math.random() * 80;
-    const top = 10 + Math.random() * 70;
-    
-    img.style.left = `${left}%`;
-    img.style.top = `${top}%`;
-    
-    // Tamaño responsivo
-    const esMovil = /Mobi|Android/i.test(navigator.userAgent);
-    img.style.width = esMovil ? '70px' : `${80 + Math.random() * 40}px`;
-    
-    // Configuración de capas mejorada
     const capas = {
         "lenga": 5, "nire": 5, "coiron": 5, "lago": 1,
         "chinchillon": 10, "tuco": 10, "pichi": 10,
@@ -846,47 +507,39 @@ function agregarAnimalAParque(nombre) {
     };
     
     img.style.zIndex = capas[nombre] || 10;
+    img.style.left = `${5 + Math.random() * 80}%`;
+    img.style.top = `${10 + Math.random() * 70}%`;
+    img.style.width = '100px';
     
-    // Efecto especial para elementos acuáticos
     if(nombre === 'lago') {
-        img.style.filter = 'brightness(1.2) saturate(1.2)';
+        img.style.filter = 'brightness(1.1)';
     }
     
     contenedorParque.appendChild(img);
-    
-    // Animación de aparición
-    img.style.opacity = '0';
-    img.style.transition = 'opacity 0.5s ease';
-    setTimeout(() => {
-        img.style.opacity = '1';
-    }, 50);
-    
-    console.log(`Animal agregado: ${nombre} en ${left}%, ${top}%`);
 }
-    
-    imgElement.onerror = function() {
-        console.error('Error cargando imagen:', nombre);
-        // Mostrar placeholder si la imagen no carga
-        img.src = 'imagenes/placeholder.png';
-        contenedorParque.appendChild(img);
-    };
-    
-    imgElement.src = rutaBase;
-    
-    // Intento alternativo si falla la primera carga
-    setTimeout(() => {
-        if (!img.parentNode && !imgElement.src.includes('placeholder')) {
-            imgElement.src = `imagenes/${nombre}.jpg`;
-        }
-    }, 500);
 
-function agregarElementoEspecial(nombre, zIndexFijo) {
-    const elemento = document.createElement('img');
-    elemento.src = `imagenes/${nombre}.png`;
-    elemento.style.zIndex = zIndexFijo;
-    elemento.style.position = 'absolute';
-    // ... resto de configuración
-    document.getElementById('parque-container').appendChild(elemento);
+function comprarAnimal(nombre, costo, puntosGenerados, intervalo) {
+    if (puntos >= costo) {
+        puntos -= costo;
+        elementoPuntos.textContent = `Puntos: ${puntos}`;
+        
+        contadorAnimales[nombre] = (contadorAnimales[nombre] || 0) + 1;
+        document.getElementById(`contador-${nombre}`).textContent = contadorAnimales[nombre];
+        
+        agregarAnimalAParque(nombre);
+        
+        setInterval(() => {
+            puntos += puntosGenerados;
+            elementoPuntos.textContent = `Puntos: ${puntos}`;
+        }, intervalo);
+        
+        puntosPorSegundo += puntosGenerados / (intervalo / 1000);
+        elementoPPS.textContent = `PPS: ${puntosPorSegundo.toFixed(1)}`;
+        
+        for (let i = 0; i < 3; i++) crearHoja();
+    } else {
+        alert("No tienes suficientes puntos :(");
+    }
 }
 
 iniciarLluviaSuave();
