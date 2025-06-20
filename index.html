@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <title>Proyecto de Conservación Interactivo</title>
     <style>
+        .hoja-acumulada {
+    position: absolute;
+    opacity: 0.7;
+    z-index: 0;
+    bottom: 0;
+    transition: all 3s ease-out;
+    pointer-events: none;
+    transform-origin: center;
+}
+
         body {
             margin: 0;
             padding: 0;
@@ -557,7 +567,91 @@ function comprarAnimal(nombre, costo, puntosGenerados, intervalo) {
     }
 }
 
-iniciarLluviaSuave();
+// Función para hojas acumuladas (versión exacta que solicitaste)
+function agregarHojaAcumulada() {
+    const hoja = document.createElement('div');
+    hoja.className = 'hoja-acumulada';
+    
+    const emojis = ['🍃', '🍂'];
+    hoja.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    hoja.style.fontSize = `${Math.random() * 30 + 30}px`;
+    hoja.style.left = `${Math.random() * 100}%`; // Modificado para aparecer más a la izquierda
+    hoja.style.transform = 'translateY(100%)';
+    
+    columnaHojas.appendChild(hoja);
+    
+    setTimeout(() => {
+        hoja.style.transform = `translateY(-${Math.random() * 15}px) rotate(${Math.random() * 360}deg)`;
+    }, 100);
+
+// Desvanecimiento progresivo después de 15-25 segundos
+    const tiempoVida = 15000 + Math.random() * 10000; // Entre 15 y 25 segundos
+    const tiempoFadeOut = 5000; // 5 segundos para desaparecer
+    
+    setTimeout(() => {
+        // Iniciar desvanecimiento
+        hoja.style.transition = `opacity ${tiempoFadeOut/1000}s ease-out`;
+        hoja.style.opacity = '0';
+        
+        // Eliminar del DOM después de desaparecer
+        setTimeout(() => {
+            if (hoja.parentNode) {
+                hoja.parentNode.removeChild(hoja);
+            }
+        }, tiempoFadeOut);
+    }, tiempoVida);
+}
+
+// Agregar este estilo al CSS
+const style = document.createElement('style');
+style.textContent = `
+.hoja-acumulada {
+    position: absolute;
+    opacity: 0.7;
+    z-index: 0;
+    bottom: 0;
+    transition: all 3s ease-out;
+    pointer-events: none;
+    transform-origin: center;
+}
+`;
+document.head.appendChild(style);
+
+
+let ultimoTiempoHoja = 0;
+let acumuladorPPS = 0;
+const hojasEnEspera = [];
+let intervaloHoja = null;
+
+function gestionarLluviaHojas(timestamp) {
+    if (!ultimoTiempoHoja) ultimoTiempoHoja = timestamp;
+    const deltaTime = timestamp - ultimoTiempoHoja;
+    ultimoTiempoHoja = timestamp;
+    
+    acumuladorPPS += (puntosPorSegundo * deltaTime) / 1000;
+    
+    while (acumuladorPPS >= 1 && hojasActivas < MAX_HOJAS) {
+        acumuladorPPS -= 1;
+        hojasEnEspera.push({});
+    }
+    
+    if (hojasEnEspera.length > 0 && (!intervaloHoja || Date.now() - intervaloHoja > 300)) {
+        // 20% de probabilidad de crear hoja acumulada en vez de hoja normal
+        if (Math.random() < 0.2) {
+            agregarHojaAcumulada();
+        } else {
+            crearHoja();
+        }
+        hojasEnEspera.shift();
+        intervaloHoja = Date.now();
+    }
+    
+    requestAnimationFrame(gestionarLluviaHojas);
+}
+
+
+// Iniciar el sistema (reemplaza iniciarLluviaSuave())
+requestAnimationFrame(gestionarLluviaHojas);
 </script>
 </body>
 </html>
