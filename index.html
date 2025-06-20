@@ -5,6 +5,63 @@
     <meta charset="UTF-8">
     <title>Proyecto de Conservación Interactivo</title>
     <style>
+                /* Nuevo estilo para la barra superior */
+        .barra-superior {
+            width: 100%;
+            background: linear-gradient(90deg, #1a3a1a, #2d5a2d);
+            color: white;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .barra-superior a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .barra-superior a:hover {
+            color: #aaffaa;
+            text-decoration: underline;
+        }
+        
+        .barra-seccion {
+            padding: 0 20px;
+            white-space: nowrap;
+        }
+        
+        /* Ajuste para el contenedor principal debido a la nueva barra */
+        .contenedor {
+            display: flex;
+            height: calc(100vh - 40px); /* Restamos el espacio de la barra */
+            margin-top: 40px; /* Espacio para la barra */
+        }
+
+        .hoja-acumulada {
+            position: absolute;
+            opacity: 0.7;
+            z-index: 0;
+            bottom: 0;
+            transition: all 3s ease-out;
+            pointer-events: none;
+            transform-origin: center;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: #f0f2f5;
+        }
         .hoja-acumulada {
     position: absolute;
     opacity: 0.7;
@@ -249,6 +306,18 @@
     </style>
 </head>
 <body>
+        <!-- Nueva barra superior -->
+    <div class="barra-superior">
+        <div class="barra-seccion">
+            <a href="https://www.argentina.gob.ar/interior/ambiente/parquesnacionales/peritomoreno" target="_blank">Sitio Oficial del Parque Nacional Perito Moreno</a>
+        </div>
+        <div class="barra-seccion">
+            Colegio Secundario Provincial N21 "José Font"
+        </div>
+        <div class="barra-seccion">
+            Damián Molina (Desarrollo web) y Laura Cardozo (Diseño gráfico)
+        </div>
+    </div>
     <div class="contenedor">
         <!-- Columna 1 (Interactiva) -->
         <div class="columna" id="columna-hojas">
